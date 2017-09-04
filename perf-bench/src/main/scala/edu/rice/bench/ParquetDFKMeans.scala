@@ -27,8 +27,12 @@ object ParquetDFKMeans {
         val kmeans = new KMeans().setInitMode("random").setK(args(2).toInt).setMaxIter(args(3).toInt)
         val model = kmeans.fit(data)
 
-        val WSSSE = model.computeCost(data)
-        println(s"Within Set Sum of Squared Errors = $WSSSE")
+        //val WSSSE = model.computeCost(data)
+        //println(s"Within Set Sum of Squared Errors = $WSSSE")
+
+        // Shows the result.
+        println("Cluster Centers: ")
+        model.clusterCenters.foreach(println)
 
         val end = System.currentTimeMillis()
         //due to pipelining optimization, below output maybe incorrect

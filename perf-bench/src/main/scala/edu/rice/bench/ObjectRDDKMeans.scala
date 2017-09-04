@@ -32,8 +32,11 @@ object ObjectRDDKMeans {
                                 .setMaxIterations(args(3).toInt)
                                 .run(data)
 
-        val cost = model.computeCost(data)
-        println(s"Total cost = $cost.")
+        //val cost = model.computeCost(data)
+        //println(s"Total cost = $cost.")
+        // Shows the result.
+        println("Cluster Centers: ")
+        model.clusterCenters.foreach(println)
         val end = System.currentTimeMillis()
         //due to Spark pipelining optimization, below output may not be correct.
         println("LoadTime: %f".format((begin-begin1)/1e3))
