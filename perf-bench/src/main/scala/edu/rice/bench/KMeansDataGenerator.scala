@@ -40,6 +40,11 @@ object KMeansDataGenerator {
            spark.stop
        } else if (args(2)=="object") {
            val sparkConf = new SparkConf().setAppName("KMeansDataGenerator")
+
+           // Kryo Serialization
+           sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+           sparkConf.set("spark.kryo.registrationRequired", "true");
+           sparkConf.set("spark.kryo.registrator", "edu.rice.bench.KMeansKryoRegistrator");
            val sc = new SparkContext(sparkConf)
            var data = sc.textFile(args(0))
            if (parallelism > 0) {
