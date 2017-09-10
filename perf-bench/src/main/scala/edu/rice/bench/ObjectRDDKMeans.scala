@@ -23,9 +23,9 @@ object ObjectRDDKMeans {
         }
         val sparkConf = new SparkConf().setAppName("ObjectRDDKMeans")
         // Kryo Serialization
-        sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        sparkConf.set("spark.kryo.registrationRequired", "true");
-        sparkConf.set("spark.kryo.registrator", "edu.rice.bench.KMeansKryoRegistrator");
+        //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+        //sparkConf.set("spark.kryo.registrationRequired", "true");
+        //sparkConf.set("spark.kryo.registrator", "edu.rice.bench.KMeansKryoRegistrator");
         val sc = new SparkContext(sparkConf)
         val begin1 = System.currentTimeMillis()
         val data = sc.objectFile[org.apache.spark.mllib.linalg.Vector](args(0))
