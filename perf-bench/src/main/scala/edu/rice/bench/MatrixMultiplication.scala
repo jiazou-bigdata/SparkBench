@@ -36,7 +36,7 @@ object MatrixMult {
            val begin = System.currentTimeMillis()
            val product = lhs * rhs
            println("the first element is %f".format(product.apply(0,0)))
-           println("the first element is %f".format(product.apply(num_row_dim1-1,num_col_dim2-1)))
+           println("the last element is %f".format(product.apply(num_row_dim1-1,num_col_dim2-1)))
            val end = System.currentTimeMillis()
            println("ProcessTime: %f".format((end-begin)/1e3))
 
