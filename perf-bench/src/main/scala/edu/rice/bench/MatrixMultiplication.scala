@@ -9,8 +9,8 @@ import scala.collection.mutable.ArrayBuffer
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 import breeze.linalg._
-import com.github.fommil.netlib.BLAS.{getInstance => nativeBLAS}
-import com.github.fommil.netlib.{BLAS => NetlibBLAS, F2jBLAS}
+//import com.github.fommil.netlib.BLAS.{getInstance => nativeBLAS}
+//import com.github.fommil.netlib.{BLAS => NetlibBLAS, F2jBLAS}
 
 
 object MatrixMult {
@@ -31,12 +31,14 @@ object MatrixMult {
            val num_col_dim2 = args(4).toInt
            val rhs = DenseMatrix.rand[Double](num_row_dim2, num_col_dim2)
 
-           val product = DenseMatrix.zeros[Double](num_row_dim1, num_col_dim2)
-           nativeBLAS.dgemm("N", "N", num_row_dim1, num_col_dim2, num_col_dim1, 1.0, lhs.t.toArray, num_row_dim1, rhs.t.toArray, num_row_dim2, 0.0, product.t.toArray, num_row_dim2);
-
+           //val product = DenseMatrix.zeros[Double](num_row_dim1, num_col_dim2)
+           //nativeBLAS.dgemm("N", "N", num_row_dim1, num_col_dim2, num_col_dim1, 1.0, lhs.t.toArray, num_row_dim1, rhs.t.toArray, num_row_dim2, 0.0, product.t.toArray, num_row_dim2);
+           val begin = System.currentTimeMillis()
+           val product = lhs * rhs
            println("the first element is %f".format(product.apply(0,0)))
            println("the first element is %f".format(product.apply(num_row_dim1-1,num_col_dim2-1)))
-
+           val end = System.currentTimeMillis()
+           println("ProcessTime: %f".format((end-begin)/1e3))
 
        } else {
            println("Type %s not supported".format(args(0)))
