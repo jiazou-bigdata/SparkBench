@@ -8,6 +8,7 @@ import sys
 import commands
 import string
 sys.path.append('/usr/lib/python2.7/dist-packages/')
+#to install rrdtool before importing
 os.system("sudo apt-get -y install rrdtool python-rrdtool")
 import rrdtool
 from threading import Timer
@@ -16,20 +17,25 @@ import math
 
 
 if len(sys.argv)!=3:
-    print  'Usage: extract.py rrdsdir interval startTimeAheadOfNow(optional)'
+    print  'Usage: extract.py rrdsdir(e.g. /var/lib/ganglia/rrds/TestingCluster) interval(e.g. 15) startTimeAheadOfNow(optional: e.g. 30)'
     sys.exit(2)
+
+#if this value is set to too small, rrd has no qualified data and the script will fail
 startTimeAheadOfNow = 30
+
 root=str(sys.argv[1])
+
 interval = int(sys.argv[2])
 
 if len(sys.argv)==4:
     startTimeAheadOfNow = int(sys.argv[3])
 
+#every invocation of this script will cause removal of the output directory
 def ensure_temp_csv_dir(f):
     shutil.rmtree(f)
     os.makedirs(f)
 
-ensure_temp_csv_dir('output')
+ensure_temp_csv_dir('ganglia-output')
 
 now = time.time() - startTimeAheadOfNow
 start = int(now)
@@ -44,8 +50,8 @@ def extract(root, start, end, resource, metrics):
     dirs = os.listdir(root)
     
     map1=string.maketrans('.','_')
-    nodefile = file('output/' + resource + '_nodes.csv', 'a')
-    summaryfile = file('output/' + resource + '_summary.csv', 'a')
+    nodefile = file('ganglia-output/' + resource + '_nodes.csv', 'a')
+    summaryfile = file('ganglia-output/' + resource + '_summary.csv', 'a')
     
     numOfMetrics = len(metrics)
     
