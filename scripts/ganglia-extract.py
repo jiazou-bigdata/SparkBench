@@ -16,7 +16,7 @@ import time
 import math
 
 
-if len(sys.argv)!=3:
+if len(sys.argv)<3:
     print  'Usage: extract.py rrdsdir(e.g. /var/lib/ganglia/rrds/TestingCluster) interval(e.g. 15) startTimeAheadOfNow(optional: e.g. 30)'
     sys.exit(2)
 
@@ -32,7 +32,8 @@ if len(sys.argv)==4:
 
 #every invocation of this script will cause removal of the output directory
 def ensure_temp_csv_dir(f):
-    shutil.rmtree(f)
+    if os.path.exists(f):
+        shutil.rmtree(f)
     os.makedirs(f)
 
 ensure_temp_csv_dir('ganglia-output')
