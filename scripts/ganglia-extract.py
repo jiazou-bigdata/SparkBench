@@ -1,6 +1,5 @@
 #!/usr/bin/python
-# Filename:extract.py
-# by Jia
+# Filename: ganglia-extract.py
 
 import shutil
 import os
