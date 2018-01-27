@@ -1,0 +1,80 @@
+Table structure (Nodes)
+CREATE TABLE CPU_NODES  (
+            TIMESTAMP 		INT NOT NULL, 
+            NODE 			VARCHAR(100) NOT NULL, 
+            CPU_AIDLE 		DOUBLE, 
+            CPU_IDLE 		DOUBLE, 
+            CPU_NICE 		DOUBLE, 
+            CPU_NUM 		DOUBLE, 
+            CPU_SPEED 		DOUBLE, 
+            CPU_SYSTEM 	DOUBLE, 
+            CPU_USER 		DOUBLE, 
+           CPU_WIO 		DOUBLE ) ;
+
+CREATE TABLE MEM_NODES  (
+            TIMESTAMP 		INT NOT NULL, 
+            NODE 			VARCHAR(100) NOT NULL, 
+            MEM_BUFFERS 	DOUBLE, 
+            MEM_CACHED 	DOUBLE, 
+            MEM_FREE 		DOUBLE, 
+            MEM_SHARED 	DOUBLE, 
+            MEM_TOTAL 	DOUBLE, 
+            SWAP_FREE 		DOUBLE, 
+            SWAP_TOTAL 	DOUBLE ) ;
+
+CREATE TABLE NETWORK_NODES  (
+            TIMESTAMP 		INT NOT NULL, 
+            NODE 			VARCHAR(100) NOT NULL, 
+            PKTS_IN 		DOUBLE, 
+            PKTS_OUT 		DOUBLE, 
+            BYTES_IN 		DOUBLE, 
+            BYTES_OUT 		DOUBLE ) ;
+
+CREATE TABLE DISK_NODES  (
+            TIMESTAMP 		INT NOT NULL, 
+            NODE 			VARCHAR(100) NOT NULL, 
+            DISK_FREE 		DOUBLE,
+DISK_TOTAL 	DOUBLE ) ;
+
+Table structure (Summary)
+CREATE TABLE CPU_SUMMARY  (
+            TIMESTAMP 		INT NOT NULL, 
+            CLUSTER_NAME	VARCHAR(100) NOT NULL, 
+            CPU_AIDLE 		DOUBLE, 
+            CPU_IDLE 		DOUBLE, 
+            CPU_NICE 		DOUBLE, 
+            CPU_NUM 		DOUBLE, 
+            CPU_SPEED 		DOUBLE, 
+            CPU_SYSTEM 	DOUBLE, 
+            CPU_USER 		DOUBLE,  
+            CPU_WIO 		DOUBLE,  
+            NUM 			FLOAT ) ;
+
+CREATE TABLE MEM_SUMMARY  (
+            TIMESTAMP 		INT NOT NULL, 
+            CLUSTER_NAME	VARCHAR(100) NOT NULL, 
+            MEM_BUFFERS 	DOUBLE, 
+            MEM_CACHED 	DOUBLE, 
+            MEM_FREE 		DOUBLE, 
+            MEM_SHARED 	DOUBLE, 
+            MEM_TOTAL 	DOUBLE, 
+            SWAP_FREE 		DOUBLE, 
+            SWAP_TOTAL 	DOUBLE,  
+            NUM 			FLOAT ) ;
+
+CREATE TABLE NETWORK_SUMMARY  (
+            TIMESTAMP 		INT NOT NULL, 
+            CLUSTER_NAME	VARCHAR(100) NOT NULL, 
+            PKTS_IN 		DOUBLE, 
+            PKTS_OUT 		DOUBLE, 
+            BYTES_IN 		DOUBLE, 
+            BYTES_OUT 		DOUBLE,  
+            NUM 			FLOAT ) ;
+
+CREATE TABLE DISK_SUMMARY  (
+            TIMESTAMP 		INT NOT NULL, 
+            CLUSTER_NAME	VARCHAR(100) NOT NULL, 
+            DISK_FREE 		DOUBLE,  
+            DISK_TOTAL 	DOUBLE,  
+            NUM 			FLOAT ) ;
+
