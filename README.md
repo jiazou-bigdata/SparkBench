@@ -29,4 +29,5 @@ CTRL-C and then archive your output data in ganglia-output folder in current dir
 ##Example
 
 python scripts/ganglia-extract.py /var/lib/ganglia/rrds/TestingCluster 15 
+
 python scripts/ganglia-extract.py /var/lib/ganglia/rrds/TestingCluster 15 60
