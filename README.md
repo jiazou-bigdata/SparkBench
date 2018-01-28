@@ -1,17 +1,17 @@
-##ganglia-extract.py
+## ganglia-extract.py
 
-##:
+### :
 https://github.com/jiazou-bigdata/SparkBench/blob/master/scripts/ganglia-extract.py
 
 
-##Purpose: 
+### Purpose: 
 
   The script is to poll rrd data from the rrd buffer during the time you run your benchmark.
 
   All polled rrd data is written to csv files in ganglia-output folder in the current directory.
 
 
-##Usage: 
+### Usage: 
 
 to start it (e.g. before you run your benchmark):
 
@@ -26,7 +26,7 @@ CTRL-C and then archive your output data in ganglia-output folder in current dir
 
 
 
-##Example
+### Example
 
 python scripts/ganglia-extract.py /var/lib/ganglia/rrds/TestingCluster 15 
 
