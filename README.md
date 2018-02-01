@@ -1,6 +1,5 @@
 ## ganglia-extract.py
 
-### :
 https://github.com/jiazou-bigdata/SparkBench/blob/master/scripts/ganglia-extract.py
 
 
