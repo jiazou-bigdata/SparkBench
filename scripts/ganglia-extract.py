@@ -65,15 +65,18 @@ def extract(root, start, end, resource, metrics):
             if os.path.exists(rrdfilename): 
                 print (rrdfilename)
 	        data = rrdtool.fetch(rrdfilename, "AVERAGE", ['--start', str(start), '--end', str(end)])
-                #	    print data
+                print data
 	        alldata[i] = data
             else:
-                alldata[i] = [999, 999, 999]
+                alldata[i] = ((0, 0, 15), ('sum',), [(0.0,)])
 	    
 	starttime = alldata[0][0][0]
 	endtime = alldata[0][0][1]
 	interval = alldata[0][0][2]
-	num = (endtime - starttime)/interval
+        if (starttime == 0):
+            num = 0
+        else:
+	    num = (endtime - starttime)/interval
         
 	isSummary = False
 	if nodeName=='__SummaryInfo__':
