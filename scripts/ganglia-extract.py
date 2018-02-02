@@ -65,7 +65,7 @@ def extract(root, start, end, resource, metrics):
             if os.path.exists(rrdfilename): 
                 print (rrdfilename)
 	        data = rrdtool.fetch(rrdfilename, "AVERAGE", ['--start', str(start), '--end', str(end)])
-                print data
+                #print data
 	        alldata[i] = data
             else:
                 alldata[i] = ((0, 0, 15), ('sum',), [(0.0,)])
