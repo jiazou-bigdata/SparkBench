@@ -62,10 +62,11 @@ def extract(root, start, end, resource, metrics):
 	alldata = ['']*numOfMetrics
 	for i in range(0, numOfMetrics):	
 	    rrdfilename = root + '/'+ nodeName + '/' + metrics[i]+'.rrd'	
-            print (rrdfilename)
-	    data = rrdtool.fetch(rrdfilename, "AVERAGE", ['--start', str(start), '--end', str(end)])
+            if os.path.exists(rrdfilename): 
+                print (rrdfilename)
+	        data = rrdtool.fetch(rrdfilename, "AVERAGE", ['--start', str(start), '--end', str(end)])
 #	    print data
-	    alldata[i] = data
+	        alldata[i] = data
 	    
 	starttime = alldata[0][0][0]
 	endtime = alldata[0][0][1]
