@@ -65,8 +65,10 @@ def extract(root, start, end, resource, metrics):
             if os.path.exists(rrdfilename): 
                 print (rrdfilename)
 	        data = rrdtool.fetch(rrdfilename, "AVERAGE", ['--start', str(start), '--end', str(end)])
-#	    print data
+                #	    print data
 	        alldata[i] = data
+            else:
+                alldata[i] = [999, 999, 999]
 	    
 	starttime = alldata[0][0][0]
 	endtime = alldata[0][0][1]
