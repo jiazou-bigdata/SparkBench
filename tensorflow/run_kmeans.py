@@ -18,7 +18,7 @@ tf.app.flags.DEFINE_integer("x", 10, "num dimensions")
 tf.app.flags.DEFINE_integer("y", 1000000, "num points")
 tf.app.flags.DEFINE_integer("input_batch_size",100, "input_batch_size")
 tf.app.flags.DEFINE_integer("mini_batch_size", 100, "mini_batch_size")
-tf.app.flags.DEFINE_integer("steps",1000, "steps")
+tf.app.flags.DEFINE_integer("steps",5, "steps")
 
 FLAGS=tf.app.flags.FLAGS
 
@@ -85,13 +85,15 @@ def main(unused_argv):
          server.join()
     else:
          # inputs
-         data = tf.placeholder(tf.float32, shape=(10000,10), name="data")
-         myData = data
-         with tf.Session() as sess:
-             rand_array = np.random.rand(10000, 10)
-             myData1 = sess.run(myData, feed_dict={data: rand_array})
+         data1 = tf.placeholder(tf.float32, shape=(1000000,10), name="data")
+         data2 = tf.placeholder(tf.float32, shape=(1000000,10), name="data")
+         myData = [data1, data2]
+         with tf.Session(config=tf.ConfigProto(intra_op_parallelism_threads=12, inter_op_parallelism_threads=12)) as sess:
+             rand_array1 = np.random.rand(1000000, 10)
+             rand_array2 = np.random.rand(1000000, 10)
+             myData=sess.run(myData, feed_dict={data1: rand_array1, data2: rand_array2})
 
-         print myData1
+         print myData
          print("To initialize a KMeans model")
          K = 100
          if FLAGS.training_mode == 'full':
@@ -102,7 +104,7 @@ def main(unused_argv):
          start_time = time.time()
          # train
          if FLAGS.training_mode == 'full':
-             km.train(input_fn=lambda : my_input_fn(myData1), steps=FLAGS.steps)
+             km.train(input_fn=lambda : my_input_fn(myData), steps=5)
          else:
              km.train(input_fn=lambda : my_batched_input_fn(FLAGS.file), steps=FLAGS.steps)
          end_time = time.time()
@@ -112,6 +114,10 @@ def main(unused_argv):
          print centers
          print "elapsed time: "
          print (end_time - start_time)
+    else:
+         print "elapsed time: "
+         print (end_time - start_time)
+
 
 if __name__ == "__main__":
   tf.app.run()
