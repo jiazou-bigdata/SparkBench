@@ -2,7 +2,6 @@
 
 --cluster configuration
 
---input file name
 
 --K
 
@@ -16,7 +15,6 @@ Cluster = {
            'worker': ['10.134.96.47:2222', '10.134.96.153:2222']
         }
 
-km.train(input_fn=lambda : my_batched_input_fn("xaa"), steps=1000)
 
 K = 10
 
@@ -32,8 +30,8 @@ Then type commands like following on each node:
 
 PS: python run_kmeans.py --job_name="ps" --task_index=0 
 
-Master: python run_kmeans.py --job_name="master" --task_index=0
+Master: python run_kmeans.py --job_name="master" --task_index=0   --file="c.txt"
 
-Worker0: python run_kmeans.py --job_name="worker" --task_index=0
+Worker0: python run_kmeans.py --job_name="worker" --task_index=0  --file="b.txt"
 
-Worker1: python run_kmeans.py --job_name="worker" --task_index=1 
+Worker1: python run_kmeans.py --job_name="worker" --task_index=1  --file="a.txt" 
