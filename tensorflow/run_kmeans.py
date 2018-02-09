@@ -6,17 +6,18 @@ import tensorflow as tf
 import simplejson as json
 import pandas as pd
 import numpy as np
+import time
 from numpy import genfromtxt
 
 #input flags
 tf.app.flags.DEFINE_string("job_name", "", "'ps' or 'worker' or 'master'")
 tf.app.flags.DEFINE_integer("task_index", 0, "task index of the job name")
+tf.app.flags.DEFINE_string("file","", "input file")
 FLAGS=tf.app.flags.FLAGS
 
 def my_input_fn(file_path):
     my_data = genfromtxt(file_path, delimiter=" ")
     data = tf.convert_to_tensor(my_data, dtype=tf.float32)
-    print "############"
     return (data, None)
 
 def my_batched_input_fn(file_path):
@@ -27,11 +28,10 @@ def my_batched_input_fn(file_path):
         return [f0,f1,f2,f3,f4,f5,f6,f7,f8,f9]
 
     dataset = (tf.data.TextLineDataset(file_path).map(decode_csv))
-    dataset = dataset.batch(32)
+    dataset = dataset.batch(100)
     iterator = dataset.make_one_shot_iterator()
     batch_features = iterator.get_next()
     data = tf.convert_to_tensor(batch_features, dtype=tf.float32)
-    tf.Print(data, [data], message="this is data: ")
     return (data, None)
 
 
@@ -39,6 +39,7 @@ def my_batched_input_fn(file_path):
 def main(unused_argv):
     print("Job name: %s" % FLAGS.job_name)
     print("Task index: %d" % FLAGS.task_index)
+    print("File: %s" % FLAGS.file)
 
     cluster = {
 
@@ -68,18 +69,19 @@ def main(unused_argv):
          server.join()
     else:
          print("To initialize a KMeans model")
+         K = 100
+         km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=False)
 
-         K = 10
-         km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=True)
-
+         start_time = time.time()
          # train
-         km.train(input_fn=lambda : my_batched_input_fn("xaa"), steps=1000)
+         km.train(input_fn=lambda : my_batched_input_fn(FLAGS.file), steps=1000000)
+         end_time = time.time()
 
     if FLAGS.job_name == 'master':
          centers = km.cluster_centers()
          print centers
-    else:
-         print "I am done"
+         print "elapsed time: "
+         print (end_time - start_time)
 
 if __name__ == "__main__":
   tf.app.run()
