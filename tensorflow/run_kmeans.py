@@ -13,12 +13,27 @@ from numpy import genfromtxt
 tf.app.flags.DEFINE_string("job_name", "", "'ps' or 'worker' or 'master'")
 tf.app.flags.DEFINE_integer("task_index", 0, "task index of the job name")
 tf.app.flags.DEFINE_string("file","", "input file")
+tf.app.flags.DEFINE_string("training_mode", "'full'", "'full' or 'mini'")
+tf.app.flags.DEFINE_integer("x", 10, "num dimensions")
+tf.app.flags.DEFINE_integer("y", 1000000, "num points")
+tf.app.flags.DEFINE_integer("input_batch_size",100, "input_batch_size")
+tf.app.flags.DEFINE_integer("mini_batch_size", 100, "mini_batch_size")
+tf.app.flags.DEFINE_integer("steps",1000, "steps")
+
 FLAGS=tf.app.flags.FLAGS
 
-def my_input_fn(file_path):
+def my_numpy_input_fn(file_path):
+    start_time = time.time()
     my_data = genfromtxt(file_path, delimiter=" ")
+    end_time = time.time()
+    print("data load time: %d" % (end_time-start_time))
     data = tf.convert_to_tensor(my_data, dtype=tf.float32)
     return (data, None)
+
+def my_input_fn(data):
+    return (data, None)   
+
+
 
 def my_batched_input_fn(file_path):
    
@@ -28,7 +43,8 @@ def my_batched_input_fn(file_path):
         return [f0,f1,f2,f3,f4,f5,f6,f7,f8,f9]
 
     dataset = (tf.data.TextLineDataset(file_path).map(decode_csv))
-    dataset = dataset.batch(100)
+    dataset = dataset.repeat()
+    dataset = dataset.batch(FLAGS.input_batch_size)
     iterator = dataset.make_one_shot_iterator()
     batch_features = iterator.get_next()
     data = tf.convert_to_tensor(batch_features, dtype=tf.float32)
@@ -47,7 +63,7 @@ def main(unused_argv):
 
              'ps': ['172.30.4.109:7777'],
 
-             'worker': ['172.30.4.70:3333', '172.30.4.245:4444']
+             'worker': ['172.30.4.245:4444']
 
     }
 
@@ -68,13 +84,27 @@ def main(unused_argv):
     if FLAGS.job_name == 'ps':
          server.join()
     else:
+         # inputs
+         data = tf.placeholder(tf.float32, shape=(10000,10), name="data")
+         myData = data
+         with tf.Session() as sess:
+             rand_array = np.random.rand(10000, 10)
+             myData1 = sess.run(myData, feed_dict={data: rand_array})
+
+         print myData1
          print("To initialize a KMeans model")
          K = 100
-         km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=False)
+         if FLAGS.training_mode == 'full':
+             km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=False)
+         else:
+             km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=True, mini_batch_steps_per_iteration=FLAGS.mini_batch_size)
 
          start_time = time.time()
          # train
-         km.train(input_fn=lambda : my_batched_input_fn(FLAGS.file), steps=1000000)
+         if FLAGS.training_mode == 'full':
+             km.train(input_fn=lambda : my_input_fn(myData1), steps=FLAGS.steps)
+         else:
+             km.train(input_fn=lambda : my_batched_input_fn(FLAGS.file), steps=FLAGS.steps)
          end_time = time.time()
 
     if FLAGS.job_name == 'master':
