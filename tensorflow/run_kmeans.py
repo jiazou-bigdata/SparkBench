@@ -97,9 +97,9 @@ def main(unused_argv):
          print("To initialize a KMeans model")
          K = 100
          if FLAGS.training_mode == 'full':
-             km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=False)
+             km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=False, config=tf.contrib.learn.RunConfig(num_cores=8, save_summary_steps=10000, save_checkpoints_secs=1200, log_step_count_steps=1000))
          else:
-             km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=True, mini_batch_steps_per_iteration=FLAGS.mini_batch_size)
+             km = tf.contrib.factorization.KMeansClustering(K, '/tmp/test-kmeans-tf-model', use_mini_batch=True, mini_batch_steps_per_iteration=FLAGS.mini_batch_size, config=tf.contrib.learn.RunConfig(num_cores=8, save_summary_steps=10000, save_checkpoints_secs=1200, log_step_count_steps=1000))
 
          start_time = time.time()
          # train
