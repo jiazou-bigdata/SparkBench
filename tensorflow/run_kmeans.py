@@ -101,11 +101,11 @@ def main(unused_argv):
 
     cluster = {
 
-             'master': ['172.30.4.109:8888'],
+             'master': ['172.30.4.126:8888'],
 
-             'ps': ['172.30.4.109:7777'],
+             'ps': ['172.30.4.126:7777'],
 
-             'worker': ['172.30.4.217:4444', '172.30.4.246:4444', '172.30.4.228:4444', '172.30.4.64:4444', '172.30.4.15:4444', '172.30.4.154:4444', '172.30.4.40:4444', '172.30.4.24:4444', '172.30.4.232:4444', '172.30.4.245:4444']
+#             'worker': ['172.30.4.217:4444', '172.30.4.246:4444', '172.30.4.228:4444', '172.30.4.64:4444', '172.30.4.15:4444', '172.30.4.154:4444', '172.30.4.40:4444', '172.30.4.24:4444', '172.30.4.232:4444', '172.30.4.245:4444']
 
     }
 
@@ -156,12 +156,18 @@ def main(unused_argv):
          # train
          if FLAGS.training_mode == 'full':
 
-             (all_scores, _, clustering_scores, _, kmeans_init,
+             (all_scores, cluster_idx, clustering_scores, cluster_centers_initialized, kmeans_init,
               kmeans_training_op) = km.training_graph()
              init = tf.global_variables_initializer()
              sess = tf.Session()
              sess.run(init)
+             i = 0
              sess.run(kmeans_init, feed_dict={data_placeholder: rand_array})
+             while cluster_centers_initialized == False:
+                 print "iteration-" + str(i)
+                 sess.run(kmeans_init, feed_dict={data_placeholder: rand_array})
+                 i = i + 1
+             print "cluster centers initialized"
              start_time1 = time.time()
              for step in xrange(FLAGS.steps):
                  sess.run(kmeans_training_op, feed_dict={data_placeholder: rand_array})
