@@ -158,6 +158,7 @@ def main(unused_argv):
 
              (all_scores, cluster_idx, clustering_scores, cluster_centers_initialized, kmeans_init,
               kmeans_training_op) = km.training_graph()
+             clustering_loss = tf.reduce_sum(clustering_scores[0])
              init = tf.global_variables_initializer()
              sess = tf.Session()
              sess.run(init)
@@ -170,7 +171,8 @@ def main(unused_argv):
              print "cluster centers initialized"
              start_time1 = time.time()
              for step in xrange(FLAGS.steps):
-                 sess.run(kmeans_training_op, feed_dict={data_placeholder: rand_array})
+                 _, clustering_loss_value = sess.run([kmeans_training_op, clustering_loss], feed_dict={data_placeholder: rand_array})
+                 print "loss=" + str(clustering_loss_value)
          else:
              km.train(input_fn=lambda : my_batched_input_fn(FLAGS.file), steps=FLAGS.steps)
          end_time = time.time()
