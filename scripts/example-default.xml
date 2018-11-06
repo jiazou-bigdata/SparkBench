@@ -46,38 +46,6 @@
                     </bean>
                 </property>
 
-                <!-- Defining several data regions for different memory regions -->
-                <property name="dataRegionConfigurations">
-                    <list>
-                        <!--
-                            Memory region of 40 MBs in size with an eviction enabled.
-                        -->
-                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
-                            <property name="name" value="40MB_Region_Eviction"/>
-                            <property name="cacheMode" value="PARTITIONED"/>
-                            <!-- Memory region of 20 MB initial size. -->
-                            <property name="initialSize" value="#{30L * 1024L * 1024L * 1024L}"/>
-                            <!-- Maximum size is 40 MB. -->
-                            <property name="maxSize" value="#{50L * 1024L * 1024L * 1024L}"/>
-                            <!-- Enabling eviction for this memory region -->
-                            <property name="pageEvictionMode" value="RANDOM_2_LRU"/>
-                        </bean>
-
-                        <!--
-                            This memory region is backed by a memory-mapped file which names is passed via
-                            'swapFilePath' parameter.
-                        -->
-                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
-                            <property name="name" value="30MB_Region_Swapping"/>
-                            <!-- Memory region of 15 MB initial size. -->
-                            <property name="initialSize" value="#{15 * 1024 * 1024}"/>
-                            <!-- Maximum size is 30 MB. -->
-                            <property name="maxSize" value="#{30 * 1024 * 1024}"/>
-                            <!-- Setting a name of the swapping file. -->
-                            <property name="swapPath" value="dataRegionExampleSwap"/>
-                        </bean>
-                    </list>
-                </property>
             </bean>
         </property>
 
