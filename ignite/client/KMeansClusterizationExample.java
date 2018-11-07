@@ -103,7 +103,7 @@ public class KMeansClusterizationExample {
              IgniteThread igniteThread = new IgniteThread( ignite.configuration().getIgniteInstanceName(), KMeansClusterizationExample.class.getSimpleName()+i, () -> {
                  
                  try {
-                        loadFile(dataCache, files[index], ignite);
+                        loadFile(index, dataCache, "/home/ubuntu/"+files[index], ignite);
 
                  } catch (Exception e) {
                     System.out.println("Catch exception");
@@ -124,7 +124,7 @@ public class KMeansClusterizationExample {
 
 
 
-    private static void loadFile (IgniteCache<Integer, double[]> cache, String fileName, Ignite ignite) throws FileNotFoundException {
+    private static void loadFile (int index, IgniteCache<Integer, double[]> cache, String fileName, Ignite ignite) throws FileNotFoundException {
         Scanner scanner = new Scanner(new File(fileName));
         int cnt = 0;
         while (scanner.hasNextLine()) {
@@ -137,7 +137,7 @@ public class KMeansClusterizationExample {
 
             cache.put(cnt++, data);
             if (cnt%10000 == 0) {
-                 System.out.println("inserted "+cnt+" lines");
+                 System.out.println(index+": inserted "+cnt+" lines");
             }
         }
     }
