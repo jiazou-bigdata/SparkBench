@@ -43,6 +43,11 @@ import org.apache.ignite.configuration.*;
  * @see KNNClassificationTrainer
  */
 public class KMeansClusterizationExample {
+
+    static IgniteCache<Integer, double[]> dataCache;
+    static String[] files = {"xaa", "xab", "xac", "xad", "xae", "xaf", "xag", "xah", "xai", "xaj"};
+    static int index;
+
     /** Run example. */
     public static void main(String[] args) throws InterruptedException {
         System.out.println();
@@ -56,9 +61,14 @@ public class KMeansClusterizationExample {
             IgniteThread igniteThread = new IgniteThread(ignite.configuration().getIgniteInstanceName(),
                 KMeansClusterizationExample.class.getSimpleName(), () -> {
                 //IgniteCache<Integer, double[]> dataCache = getTestCache(ignite);
-                IgniteCache<Integer, double[]> dataCache;
+
+                CacheConfiguration<Integer, double[]> cacheConfiguration = new CacheConfiguration<>();
+                cacheConfiguration.setName("TEST_" + UUID.randomUUID());
+                cacheConfiguration.setAffinity(new RendezvousAffinityFunction(false, 10));
+                IgniteCache<Integer, double[]> dataCache = ignite.createCache(cacheConfiguration);
                 try {
-                    dataCache = loadData("/home/ubuntu/kmeans-10dim-1000000000points", ignite);
+                    //dataCache = loadData("/home/ubuntu/kmeans-10dim-1000000000points", ignite);
+                    loadFiles(ignite);
                     long startTime = System.currentTimeMillis();
                     KMeansTrainer trainer = new KMeansTrainer()
                       .withSeed(7867L);
@@ -77,12 +87,58 @@ public class KMeansClusterizationExample {
                     System.out.println("can not load /home/ubuntu/kmeans-10dim-1000000000points");
                 }
 
-
-
             });
 
             igniteThread.start();
             igniteThread.join();
+        }
+    }
+
+    private static void loadFiles (final Ignite ignite) throws FileNotFoundException {
+     IgniteThread[] threads={null};
+     try {
+        for (int i = 0; i < 10; i++) {
+             index = i;
+             System.out.println(">>>>>> IgniteThread-"+i+" to be started");
+             IgniteThread igniteThread = new IgniteThread( ignite.configuration().getIgniteInstanceName(), KMeansClusterizationExample.class.getSimpleName()+i, () -> {
+                 
+                 try {
+                        loadFile(dataCache, files[index], ignite);
+
+                 } catch (Exception e) {
+                    System.out.println("Catch exception");
+                 }
+
+               }
+             );
+             threads[i] = igniteThread;
+             igniteThread.start();
+        }
+        for (int i = 0; i < threads.length; i++) {
+             threads[i].join();
+        }
+     } catch (Exception e) {
+        System.out.println("Catch exception");
+     }
+   }
+
+
+
+    private static void loadFile (IgniteCache<Integer, double[]> cache, String fileName, Ignite ignite) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(fileName));
+        int cnt = 0;
+        while (scanner.hasNextLine()) {
+            String row = scanner.nextLine();
+            String[] cells = row.split(" ");
+            double[] data = new double[cells.length];
+
+            for (int i = 0; i < data.length; i++)
+                data[i] = Double.valueOf(cells[i]);
+
+            cache.put(cnt++, data);
+            if (cnt%10000 == 0) {
+                 System.out.println("inserted "+cnt+" lines");
+            }
         }
     }
 
