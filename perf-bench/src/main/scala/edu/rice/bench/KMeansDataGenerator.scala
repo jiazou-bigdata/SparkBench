@@ -5,6 +5,10 @@
 
 
 package edu.rice.bench
+import org.apache.ignite.configuration.CacheConfiguration
+import org.apache.ignite.spark.{IgniteContext, IgniteRDD}
+
+
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
 import org.apache.spark.rdd.RDD
@@ -42,9 +46,9 @@ object KMeansDataGenerator {
            val sparkConf = new SparkConf().setAppName("KMeansDataGenerator")
 
            // Kryo Serialization
-           sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-           sparkConf.set("spark.kryo.registrationRequired", "true");
-           sparkConf.set("spark.kryo.registrator", "edu.rice.bench.KMeansKryoRegistrator");
+           //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
+           //sparkConf.set("spark.kryo.registrationRequired", "true");
+           //sparkConf.set("spark.kryo.registrator", "edu.rice.bench.KMeansKryoRegistrator");
            val sc = new SparkContext(sparkConf)
            var data = sc.textFile(args(0))
            if (parallelism > 0) {
@@ -56,6 +60,26 @@ object KMeansDataGenerator {
            println(objects.count())
            objects.saveAsObjectFile(args(1)) 
            sc.stop()       
+
+       } else if (args(2) == "igniteShared") {
+           // Spark Configuration.
+           val conf = new SparkConf().setAppName("IgniteRDDExample")
+           // Spark context.
+           val sparkContext = new SparkContext(conf)
+           // Defines spring cache Configuration path.
+           val CONFIG = "config/example-cache.xml"
+           // Creates Ignite context with above configuration.
+           val igniteContext = new IgniteContext(sparkContext, CONFIG, false)
+           // Creates an Ignite Shared RDD with Value being Vectors.
+           val sharedRDD: IgniteRDD[Any,org.apache.spark.mllib.linalg.Vector] = igniteContext.fromCache("sharedRDD")
+           var data = sparkContext.textFile(args(0))
+           if (parallelism > 0) {
+               data = data.repartition(parallelism)
+           }
+           data.persist(StorageLevel.MEMORY_AND_DISK)
+           val objects: RDD[org.apache.spark.mllib.linalg.Vector] =data.map(s => Vectors.dense(s.split(' ').map(_.toDouble))).cache()
+           sharedRDD.saveValues(objects)
+           sparkContext.stop()
        } else if (args(2) == "parquet") {
            val spark = SparkSession.builder.appName("KMeansDataGenerator").getOrCreate()
            import spark.implicits._
