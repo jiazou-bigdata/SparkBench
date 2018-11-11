@@ -63,39 +63,9 @@
                         <property name="name" value="Default_Region"/>
                         <!-- 100 MB memory region with disabled eviction -->
                         <property name="initialSize" value="#{100 * 1024 * 1024}"/>
+                        <property name="maxSize" value="#{40L * 1024L * 1024L * 1024L}"/>
+                        <property name="pageEvictionMode" value="RANDOM_2_LRU"/>
                     </bean>
-                </property>
-
-                <!-- Defining several data regions for different memory regions -->
-                <property name="dataRegionConfigurations">
-                    <list>
-                        <!--
-                            Memory region of 40 MBs in size with an eviction enabled.
-                        -->
-                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
-                            <property name="name" value="40GB_Region_Eviction"/>
-                            <!-- Memory region of 20 MB initial size. -->
-                            <property name="initialSize" value="#{20 * 1024 * 1024}"/>
-                            <!-- Maximum size is 40 GB. -->
-                            <property name="maxSize" value="#{40L * 1024L * 1024L * 1024L}"/>
-                            <!-- Enabling eviction for this memory region -->
-                            <property name="pageEvictionMode" value="RANDOM_2_LRU"/>
-                        </bean>
-
-                        <!--
-                            This memory region is backed by a memory-mapped file which names is passed via
-                            'swapFilePath' parameter.
-                        -->
-                        <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
-                            <property name="name" value="30GB_Region_Swapping"/>
-                            <!-- Memory region of 15 MB initial size. -->
-                            <property name="initialSize" value="#{15 * 1024 * 1024}"/>
-                            <!-- Maximum size is 30 GB. -->
-                            <property name="maxSize" value="#{30L * 1024L * 1024L * 1024L}"/>
-                            <!-- Setting a name of the swapping file. -->
-                            <property name="swapPath" value="dataRegionExampleSwap"/>
-                        </bean>
-                    </list>
                 </property>
             </bean>
         </property>
@@ -116,15 +86,12 @@
                         <property name="addresses">
                             <list>
                                 <!-- In distributed environment, replace with actual host IP address. -->
-                                <value>172.30.1.58:47500..47509</value>
                                 <value>172.30.1.14:47500..47509</value>
                                 <value>172.30.1.158:47500..47509</value>
                                 <value>172.30.1.236:47500..47509</value>
                                 <value>172.30.1.124:47500..47509</value>
-                                <value>172.30.1.221:47500..47509</value>
                                 <value>172.30.1.125:47500..47509</value>
                                 <value>172.30.1.184:47500..47509</value>
-                                <value>172.30.1.100:47500..47509</value>
                                 <value>172.30.1.50:47500..47509</value>
                                 <value>172.30.1.146:47500..47509</value>
                             </list>
