@@ -45,10 +45,32 @@
                     <property name="name" value="default"/>
                     <property name="atomicityMode" value="ATOMIC"/>
                     <property name="cacheMode" value="PARTITIONED"/>
-                    <property name="backups" value="1"/>
+                    <property name="backups" value="0"/>
                 </bean>
             </list>
         </property>
+
+        <property name="peerClassLoadingEnabled" value="true"/>
+
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <!--
+                    Default memory region that grows endlessly. A cache is bound to this memory region
+                    unless it sets another one in its CacheConfiguration.
+                -->
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="name" value="Default_Region"/>
+                        <!-- 100 MB memory region with disabled eviction -->
+                        <property name="initialSize" value="#{100 * 1024 * 1024}"/>
+                        <property name="maxSize" value="#{60L * 1024L * 1024L * 1024L}"/>
+                        <property name="swapPath" value="/home/ubuntu/swap"/>
+                        <!--property name="persistenceEnabled" value="true"/-->
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
 
         <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
         <property name="discoverySpi">
@@ -61,13 +83,20 @@
                     -->
                     <!-- Uncomment static IP finder to enable static-based discovery of initial nodes. -->
                     <!--<bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">-->
-                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
                         <property name="addresses">
                             <list>
                                 <!-- In distributed environment, replace with actual host IP address. -->
-                                <value>172.30.1.58:47500..47509</value>
-                                <value>172.30.1.14:47500..47509</value>
-                                <value>172.30.1.158:47500..47509</value>
+                                <value>172.31.80.181:47500..47509</value>
+                                <value>172.31.94.95:47500..47509</value>
+                                <value>172.31.81.24:47500..47509</value>
+                                <value>172.31.82.103:47500..47509</value>
+                                <value>172.31.92.1:47500..47509</value>
+                                <value>172.31.88.4:47500..47509</value>
+                                <value>172.31.90.9:47500..47509</value>
+                                <value>172.31.91.75:47500..47509</value>
+                                <value>172.31.88.163:47500..47509</value>
+                                <value>172.31.81.91:47500..47509</value>
                             </list>
                         </property>
                     </bean>
